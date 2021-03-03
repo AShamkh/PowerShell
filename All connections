@@ -1,0 +1,14 @@
+$Auth = Get-Credential
+$UserCredential = $Auth
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
+Import-PSSession $Session -DisableNameChecking
+Import-Module MicrosoftTeams
+$userCredential = $Auth
+$sfbSession = New-CsOnlineSession -Credential $userCredential
+Import-PSSession $sfbSession
+$Credential = $Auth
+Connect-AzureAD -Credential $Credential
+$Credential = $Auth
+Connect-MsolService -Credential $Credential
+Connect-SPOService -Credential $auth
+Get-Module
