@@ -1,0 +1,13 @@
+start-transcript
+$user = "User@domain.com"
+
+Search-MailboxAuditLog -Identity $user -ShowDetails -StartDate (get-date).AddDays(-30) -EndDate (get-date) | Export-Clixml C:\Temp\mailboxlogs.xml
+
+get-mailbox $user | select AuditEnabled
+
+get-mailbox $user | select -expandproperty auditadmin
+
+get-mailbox $user | select -expandproperty auditdelegate
+
+get-mailbox $user | select -expandproperty auditowner
+Stop-transcript
