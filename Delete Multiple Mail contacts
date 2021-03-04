@@ -1,0 +1,6 @@
+$users = Import-Csv C:\Users\YourUsername\Desktop\users.csv 
+foreach ($user in $users) 
+{ 
+$ExternalEmailAddress=$user.ExternalEmailAddress
+Remove-MailContact $ExternalEmailAddress
+}
