@@ -1,0 +1,5 @@
+###Onprem###
+Set-remotedomain 'tenant.onmicrosoft.com' -TrustedMailInboundEnabled $true
+Set-remotedomain 'tenant.mail.onmicrosoft.com' -TrustedMailOutboundEnabled $true -TargetDeliveryDomain $true
+###On Cloud###
+Set-remotedomain 'custom-domain.com' -TrustedMailOutboundEnabled $true -isinternal $true
