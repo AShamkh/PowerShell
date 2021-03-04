@@ -1,0 +1,29 @@
+$lines = @()
+
+foreach($msolUser in (Get-MSOLUser -ALL | where {$_.isLicensed -eq $true}))
+
+{
+
+    $UserInfo = Get-User -identity $msolUser.UserPrincipalName
+
+    foreach($license in $msolUser.Licenses)
+
+    {
+
+        $lines += New-Object PsObject -Property @{
+
+                    "Nom/Prenom"="$($UserInfo.DisplayName)";
+
+                    "Societe"="$($UserInfo.Company)";
+
+                    "AdressePrincipale"="$($UserInfo.UserPrincipalName)";
+
+                    "Licences"="$($license.AccountSKUid)"
+
+                  }
+
+    }
+
+}
+
+$lines | Export-CSV C:\AllUsers.csv -Delimiter ";" -Encoding Unicode
