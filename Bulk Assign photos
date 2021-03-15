@@ -1,0 +1,1 @@
+Import-csv c:\Pics\userkes.csv | % { Set-UserPhoto –Identity $_.username -PictureData ([System.IO.File]::ReadAllBytes($_.picture)) -Confirm:$false}
