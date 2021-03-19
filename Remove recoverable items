@@ -1,0 +1,94 @@
+#######Step 1#####
+
+Start-Transcript
+
+$user="Affecteduser@domain.com"
+
+Get-Mailbox $user | FL SingleItemRecoveryEnabled,RetainDeletedItemsFor
+
+Get-CASMailbox $user | FL EwsEnabled,ActiveSyncEnabled,MAPIEnabled,OWAEnabled,ImapEnabled,PopEnabled
+
+Get-Mailbox $user | FL LitigationHoldEnabled,InPlaceHolds
+
+Get-Mailbox $user | Format-List RetainDeletedItemsFor
+
+Get-MailboxFolderStatistics $user -FolderScope RecoverableItems | FL Name,FolderAndSubfolderSize,ItemsInFolderAndSubfolders
+
+Get-MailboxFolderStatistics $user -FolderScope RecoverableItems -Archive | FL Name,FolderAndSubfolderSize,ItemsInFolderAndSubfolders
+
+Get-mailbox $user |fl archivedatabase,archiveguid
+
+Get-OrganizationConfig | FL InPlaceHolds
+
+Stop-Transcript
+####Step2######
+
+$user="Affecteduser@domain.com"
+
+#####Disable Client access- will take 60 minutes#####
+
+Set-CASMailbox $user -EwsEnabled $false -ActiveSyncEnabled $false -MAPIEnabled $false -OWAEnabled $false -ImapEnabled $false -PopEnabled $false
+
+Set-Mailbox $user -RetainDeletedItemsFor 30
+
+######Disabling singleitemrecovery will take 60 minutes####
+
+Set-Mailbox $user -SingleItemRecoveryEnabled $false
+
+###managedfolderassistane, only disable when retention policy is not applied###
+
+Set-Mailbox $user -ElcProcessingDisabled $true
+    
+####Removeholds###
+
+Set-Mailbox $user -LitigationHoldEnabled $false
+
+##########Replace hold guid and retention policy GUID with values from step 1##########
+
+Get-MailboxSearch -InPlaceHoldIdentity <hold GUID> | FL Name
+
+Get-RetentionCompliancePolicy <retention policy GUID without prefix> | FL Name
+
+Get-RetentionCompliancePolicy <retention policy GUID without prefix> | FL Name
+
+Get-Mailbox <username> |FL ComplianceTagHoldApplied
+
+$CaseHold = Get-CaseHoldPolicy <hold GUID without prefix>
+
+Get-ComplianceCase $CaseHold.CaseId | FL Name
+    
+$CaseHold.Name
+
+Get-Mailbox $user | FL DelayHoldApplied,DelayReleaseHoldApplied
+
+Set-Mailbox $user -RemoveDelayHoldApplied
+
+Set-Mailbox $user -RemoveDelayReleaseHoldApplied
+
+New-ComplianceSearch -Name "Hold-Tailspin Toys" -ExchangeLocation "Research Department" -ContentMatchQuery "'Patent' AND 'Project Tailspin Toys'"
+
+New-ComplianceSearchAction -SearchName "Hold-Tailspin Toys" -Purge -PurgeType HardDelete
+
+############To delete more than 10 - you will run the previous command multiple times but first remove-compliancesearch action#########
+
+    
+Remove-ComplianceSearchAction "RecoverableItems_Purge"
+######verify items were deleted###########
+Get-MailboxFolderStatistics $user -FolderScope RecoverableItems | FL Name,FolderAndSubfolderSize,ItemsInFolderAndSubfolders
+Get-MailboxFolderStatistics $user -FolderScope RecoverableItems -Archive | FL Name,FolderAndSubfolderSize,ItemsInFolderAndSubfolders
+
+
+
+
+########Step3#######
+Restore to original state:
+Set-Mailbox $user -RetainDeletedItemsFor 14
+Set-Mailbox $user -SingleItemRecoveryEnabled $true
+Set-CASMailbox $user -EwsEnabled $true -ActiveSyncEnabled $true -MAPIEnabled $true -OWAEnabled $true -ImapEnabled $true -PopEnabled $true
+#########enable holds if they were previously disabled during step 2######
+Set-Mailbox $user -LitigationHoldEnabled $true
+Set-Mailbox $user -ElcProcessingDisabled $false
+Get-Mailbox $user | FL ElcProcessingDisabled,InPlaceHolds,LitigationHoldEnabled,RetainDeletedItemsFor,SingleItemRecoveryEnabled
+Get-CASMailbox $user | FL EwsEnabled,ActiveSyncEnabled,MAPIEnabled,OWAEnabled,ImapEnabled,PopEnabled
+
+
