@@ -1,0 +1,11 @@
+Start-Transcript
+$user="Affecteduser@domain.com"
+Get-Mailbox $user | FL SingleItemRecoveryEnabled,RetainDeletedItemsFor
+Get-CASMailbox $user | FL EwsEnabled,ActiveSyncEnabled,MAPIEnabled,OWAEnabled,ImapEnabled,PopEnabled
+Get-Mailbox $user | FL LitigationHoldEnabled,InPlaceHolds
+Get-Mailbox $user | Format-List RetainDeletedItemsFor
+Get-MailboxFolderStatistics $user -FolderScope RecoverableItems | FL Name,FolderAndSubfolderSize,ItemsInFolderAndSubfolders
+Get-MailboxFolderStatistics $user -FolderScope RecoverableItems -Archive | FL Name,FolderAndSubfolderSize,ItemsInFolderAndSubfolders
+Get-mailbox $user |fl archivedatabase,archiveguid
+Get-OrganizationConfig | FL InPlaceHolds
+Stop-Transcript
