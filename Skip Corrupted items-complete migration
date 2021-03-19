@@ -1,0 +1,7 @@
+Set-MoveRequest -Identity user@domain.com -SkippedItemApprovalTime $(Get-Date).ToUniversalTime()
+Set-MoveRequest "Name"-SuspendWhenReadyToComplete $false -PreventCompletion $false -CompleteAfter 1
+Resume-MoveRequest -Identity “Name”
+Get-MoveRequest  | Get-MoveRequestStatistics | Select *TimeStamp, DisplayName, StatusDetail, TotalMailboxSize, TotalArchiveSize, PercentComplete
+$Date = Get-Date 
+Get-MoveRequest -Identity John@contoso.com | Set-MoveRequest -CompleteAfter $Date Get-MoveRequest -Identity John@contoso.com | Resume-MoveRequest -Confirm:$false
+Get-MigrationBatch | Where {$_.DataConsistencyScore -Like "*Investigate*"} | ft Identity,DataConsistencyScore,SkippedItemApprovalTime
