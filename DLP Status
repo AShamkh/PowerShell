@@ -1,0 +1,4 @@
+###Replace Sensitve info with DLP policy name####
+$p1 = Get-DlpCompliancePolicy -Identity "Sensitive Info" -DistributionDetail
+$p1 | FT *distr*
+####Provides the actual status of the policy delpoyment as the other commands will always say pending####
