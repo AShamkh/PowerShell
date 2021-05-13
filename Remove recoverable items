@@ -64,15 +64,21 @@ Get-Mailbox $user | FL DelayHoldApplied,DelayReleaseHoldApplied
 Set-Mailbox $user -RemoveDelayHoldApplied
 
 Set-Mailbox $user -RemoveDelayReleaseHoldApplied
+##########Start Seach
 
-New-ComplianceSearch -Name "Hold-Tailspin Toys" -ExchangeLocation "Research Department" -ContentMatchQuery "'Patent' AND 'Project Tailspin Toys'"
+New-ComplianceSearch -Name "Operation Delete recoverable items" -ExchangeLocation "email@domain" -ContentMatchQuery "' folderid:12345F0757227064F8Dr2d2nCC2C54B300000000001150000'" 
 
-New-ComplianceSearchAction -SearchName "Hold-Tailspin Toys" -Purge -PurgeType HardDelete
+Start-ComplianceSearch –Identity "Operation Delete recoverable items" 
+
+Get-ComplianceSearch -Identity "Operation Delete recoverable items" 
+###Start Deletion####
+New-ComplianceSearchAction -SearchName "Operation Delete recoverable items" -Purge -PurgeType HardDelete
+Get-ComplianceSearchAction -Identity "Operation Delete recoverable items" | Format-List
 
 ############To delete more than 10 - you will run the previous command multiple times but first remove-compliancesearch action#########
-
-    
-Remove-ComplianceSearchAction "RecoverableItems_Purge"
+Remove-ComplianceSearchAction "Operation Delete recoverable items"
+New-ComplianceSearchAction -SearchName "Operation Delete recoverable items" -Purge -PurgeType HardDelete
+Get-ComplianceSearchAction -Identity "Operation Delete recoverable items" | Format-List
 ######verify items were deleted###########
 Get-MailboxFolderStatistics $user -FolderScope RecoverableItems | FL Name,FolderAndSubfolderSize,ItemsInFolderAndSubfolders
 Get-MailboxFolderStatistics $user -FolderScope RecoverableItems -Archive | FL Name,FolderAndSubfolderSize,ItemsInFolderAndSubfolders
